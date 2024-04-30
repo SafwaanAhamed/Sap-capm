@@ -1,0 +1,60 @@
+{
+    "name": "extsrv_pa85839u01",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@sap-cloud-sdk/http-client": "^3.14.0",
+        "@sap-cloud-sdk/resilience": "^3.14.0",
+        "@sap/cds": "^7",
+        "@sap/cds-hana": "^2",
+        "express": "^4"
+    },
+    "devDependencies": {
+        "@cap-js/sqlite": "^1",
+        "@sap/cds-dk": "^7",
+        "@sap/ux-specification": "^1.120.9",
+        "rimraf": "^3.0.2"
+    },
+    "scripts": {
+        "start": "cds-serve",
+        "watch-day5extsrv": "cds watch --open day5extsrv/webapp/index.html?sap-ui-xx-viewCache=false",
+        "undeploy": "cf undeploy extsrv_pa85839u01 --delete-services --delete-service-keys --delete-service-brokers",
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    },
+    "cds": {
+        "requires": {
+            "auth": {
+                "kind": "dummy-auth"
+            },
+            "db": {
+                "[production]": {
+                    "kind": "hana-cloud"
+                },
+                "[development]": {
+                    "kind": "sql"
+                },
+                "model": [
+                    "db",
+                    "srv"
+                ]
+            },
+            "salesterritory": {
+                "kind": "odata-v2",
+                "model": "srv/external/salesterritory",
+                "credentials": {
+                    "url": "https://sandbox.api.sap.com/sap/c4c/odata/v1/c4codataapi",
+                    "headers": {
+                        "APIKey": "axXNk5LVE2A7euiAaxvKUBYv5nl7jFA4"
+                    }
+                }
+            }
+        }
+    },
+    "sapux": [
+        "app/day5extsrv"
+    ]
+}
